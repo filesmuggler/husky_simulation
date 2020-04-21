@@ -1,0 +1,8 @@
+prefix=/home/krzysztof/Repos/husky_simulation/husky_ws/devel
+
+Name: husky_gazebo
+Description: Description of husky_gazebo
+Version: 0.4.3
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

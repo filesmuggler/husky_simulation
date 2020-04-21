@@ -1,0 +1,8 @@
+prefix=/home/krzysztof/Repos/husky_simulation/husky_ws/devel
+
+Name: husky_description
+Description: Description of husky_description
+Version: 0.4.3
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
