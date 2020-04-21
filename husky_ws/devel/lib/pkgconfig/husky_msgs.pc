@@ -1,8 +1,0 @@
-prefix=/home/krzysztof/Repos/husky_simulation/husky_ws/devel
-
-Name: husky_msgs
-Description: Description of husky_msgs
-Version: 0.4.3
-Cflags: -I/home/krzysztof/Repos/husky_simulation/husky_ws/devel/include
-Libs: -L${prefix}/lib 
-Requires: std_msgs message_runtime
