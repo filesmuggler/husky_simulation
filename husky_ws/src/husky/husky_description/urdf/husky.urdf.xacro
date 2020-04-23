@@ -52,6 +52,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <xacro:include filename="$(find husky_description)/urdf/accessories/sensor_arch.urdf.xacro"/>
 
   <xacro:include filename="$(find ur5_description)/urdf/ur5_robotiq85_gripper.urdf.xacro" />
+  <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro" />
   <!--<xacro:include filename="$(find robotiq_2f_85_gripper_visualization)/urdf/robotiq_arg2f_85_model_macro.xacro" />-->
   
   <!--<xacro:include filename="$(find ur_description)/urdf/ur5_joint_limited_robot.urdf.xacro" />-->
@@ -146,6 +147,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
   <xacro:husky_decorate />
 
+  <xacro:arg name="gpu" default="false"/>
+  <xacro:property name="gpu" value="$(arg gpu)" />
+
+  <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
+  <VLP-16 parent="top_plate_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440" gpu="${gpu}">
+    <origin xyz="0.30 0 0.0" rpy="0 0 0" />
+  </VLP-16>
+
   <xacro:if value="$(arg laser_enabled)">
 
     <sick_lms1xx_mount prefix="base"/>
@@ -173,7 +182,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <xacro:if value="$(arg ur5_enabled)">
     <xacro:property name="reflect" value="-1" />
     <joint name="ur5_arm_base" type="fixed">
-      <origin xyz="0.3058 0 0.0065" rpy="0.0 0.0 -1.57" />
+      <origin xyz="-0.05 0 0.0065" rpy="0.0 0.0 -1.57" />
       <parent link="top_plate_link" />
       <child link="ur5_arm_base_link"/>
     </joint>
@@ -182,6 +191,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
     
   </xacro:if>
+
+
 
 
   <gazebo>
