@@ -50,7 +50,7 @@
   </joint>
   
   <xacro:sensor_d435 parent="d435_link" name="intel_cam" >
-    <origin xyz="-0.05 -0.01 0.01" rpy="1.57 0 3.14"/>
+    <origin xyz="-0.10 -0.01 0.01" rpy="1.57 0 3.14"/>
      <!-- <origin xyz="0.20 0 0" rpy="0 0 0"/> -->
   </xacro:sensor_d435>
   <!-- Equivalent to the OpenRAVE manipulator denso_robotiq_85_gripper -->
