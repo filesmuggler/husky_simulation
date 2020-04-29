@@ -1,0 +1,2 @@
+realsense-ros/realsense2_camera:realsense-ros/realsense2_description:robotiq/robotiq_description:robotiq/robotiq_gazebo:ur5/ur5_description:ur5/ur5_gazebo
+-DCATKIN_DEVEL_PREFIX=/home/krzysztof/Repos/husky_simulation/ur_d435_ws/devel -DCMAKE_INSTALL_PREFIX=/home/krzysztof/Repos/husky_simulation/ur_d435_ws/install -G Unix Makefiles
