@@ -29,14 +29,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="kinect_enabled" default="true"/>
   <arg name="ur5_enabled" default="true"/>
 
-  <param name="box_description" command="$(find xacro)/xacro --inorder $(find husky_gazebo)/models/box.xacro"/>
-  <node name="box_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" args="robot_description:=box_description" />
-  <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-param box_description -urdf -model box"/>
+  
+  <!-- <param name="box_description" command="$(find xacro)/xacro inorder $(find husky_gazebo)/models/box.xacro"/>
+  <node name="box_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" args="robot_description:=box_description" /> -->
+  <!-- <node name="spawn_object" pkg="gazebo_ros" type="spawn_model" args="-param box_description -urdf -model box"/> -->
 
   <rosparam file="$(find husky_control)/config/gazebo_controllers.yaml" command="load"/>
   <node name="arm_controller_spawner" pkg="controller_manager" type="controller_manager" args="spawn arm_controller" respawn="false" output="screen"/>
 
-  <!--<rosparam file="$(find husky_control)/config/gazebo_ros_control_params.yaml" command="load"/>-->
+  <!-- <rosparam file="$(find husky_control)/config/gazebo_ros_control_params.yaml" command="load"/> -->
 
   <include file="$(find husky_gazebo)/launch/playpen.launch" />
 
