@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<robot name="ur5" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find ur5_description)/urdf/ur5.urdf.xacro" />
+  <xacro:include filename="$(find robotiq_description)/urdf/robotiq_85_gripper.urdf.xacro" />
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+  
+  <!-- Robotiq Coupler -->
+  <!--  + Height added by the coupler: 8mm -->
+  <!--  + Reference frame: at the middle (4mm) -->
+  <link name="robotiq_coupler">
+    <visual>
+      <geometry>
+        <mesh filename="package://robotiq_description/meshes/robotiq_85_coupler.stl" />
+      </geometry>
+      <material name="flat_black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://robotiq_description/meshes/robotiq_85_coupler.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="2.073e-05   1.45286e-03  -1.1049e-03" rpy="0 0 0" />
+      <mass value="0.168" />
+      <inertia ixx="6.69695624e-05" ixy="5.21511788e-09" ixz="-2.74383009e-08" 
+               iyy="7.85088161e-05" iyz="5.41105193e-07" izz="1.41819717e-04"/>
+    </inertial>
+  </link>
+
+  <joint name="robotiq_coupler_joint" type="fixed">
+    <origin xyz="0 0 0.004" rpy="0 0 ${-pi/2.0}" />
+    <parent link="ur5_arm_tool0"/>
+    <child link="robotiq_coupler"/>
+  </joint>
+  <gazebo reference="robotiq_coupler">
+    <mu1>0.9</mu1>
+    <mu2>0.9</mu2>
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+
+<!-- TODO: below code causes spinning of the robot, but is not essential for the further research. -->
+<!-- 
+  <link name="ur_holder_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://ur5_description/meshes/prints/ur5_mount.stl" scale="0.0001 0.0001 0.0001"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://ur5_description/meshes/prints/ur5_mount.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="2.073e-05   1.45286e-03  -1.1049e-03" rpy="0 0 0" />
+      <mass value="0.168" />
+      <inertia ixx="6.69695624e-05" ixy="5.21511788e-09" ixz="-2.74383009e-08" 
+               iyy="7.85088161e-05" iyz="5.41105193e-07" izz="1.41819717e-04"/>
+    </inertial>
+  </link>
+
+  <joint name="ur_holder_joint" type="fixed">
+    <origin xyz="0 0 0.004" rpy="0 0 ${-pi/2.0}" />
+    <parent link="ur5_arm_tool0"/>
+    <child link="ur_holder_link"/>
+  </joint> -->
+  
+
+  <!--
+    Mesh Bounding Box Size 86.324379 8.000000 86.324379
+    Mesh Bounding Box Diag 122.342949 
+    Mesh Volume is 34716.183594
+    Mesh Surface is 12457.061523
+    Thin shell barycenter -5.608132 3.974069 -5.687165
+    Center of Mass is -4.176132 4.003194 -4.176786
+    Inertia Tensor is :
+    | 12976644.000000 -332.735840 -836477.000000 |
+    | -332.735840 25577576.000000 -420.031555 |
+    | -836477.000000 -420.031555 12976836.000000 |
+    Principal axes are :
+    | 0.707147 -0.000024 -0.707066 |
+    | 0.000040 1.000000 0.000005 |
+    | 0.707066 -0.000032 0.707147 |
+    axis momenta are :
+    | 12140263.000000 25577576.000000 13813217.000000 |
+  -->
+
+
+  <link name="d435_link">
+  </link>
+
+  <joint name="d435_joint" type="fixed">
+    <origin xyz="0 0 0.0" rpy="0 0 0" />
+    <parent link="ur5_arm_tool0"/>
+    <child link="d435_link"/>
+  </joint>
+  
+  <xacro:sensor_d435 parent="d435_link" name="intel_cam" >
+    <origin xyz="-0.08 -0.01 0.01" rpy="1.57 0 3.14"/>
+     <!-- <origin xyz="0.20 0 0" rpy="0 0 0"/> -->
+  </xacro:sensor_d435>
+  <!-- Equivalent to the OpenRAVE manipulator denso_robotiq_85_gripper -->
+  <!-- <link name="denso_robotiq_85_gripper" /> -->
+  <!-- <joint name="manipulator_dummy_joint" type="fixed"> -->
+  <!--   <origin xyz="0 0 0.1441" rpy="0 0 0" /> -->
+  <!--   <parent link="robotiq_coupler"/> -->
+  <!--   <child link="denso_robotiq_85_gripper"/> -->
+  <!-- </joint> -->
+  
+  <!-- Attach the robotiq 85 gripper -->
+  <xacro:robotiq_85_gripper prefix="" parent="robotiq_coupler" >
+    <origin xyz="0 0 0.004" rpy="0 ${-pi/2} ${pi}"/>
+  </xacro:robotiq_85_gripper> 
+  
+  <!-- Gazebo FT sensor plugin -->
+  <gazebo reference="ur5_arm_wrist_3_joint">
+    <provideFeedback>true</provideFeedback>
+  </gazebo>
+  <gazebo>
+    <plugin name="ft_sensor_plugin" filename="libgazebo_ros_ft_sensor.so">
+      <updateRate>250.0</updateRate>
+      <topicName>ft_sensor/raw</topicName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <jointName>wrist_3_joint</jointName>
+    </plugin>
+  </gazebo>
+  
+  <!-- Gazebo grasping plugin -->
+  <gazebo>
+    <gripper name="gazebo_gripper">
+      <grasp_check>
+        <attach_steps>2</attach_steps>    <!-- default: 20 -->
+        <detach_steps>2</detach_steps>    <!-- default: 40 -->
+        <min_contact_count>3</min_contact_count>
+      </grasp_check>
+      <gripper_link>robotiq_85_left_finger_tip_link</gripper_link>
+      <gripper_link>robotiq_85_right_finger_tip_link</gripper_link>
+      <palm_link>robotiq_85_base_link</palm_link>
+    </gripper>
+  </gazebo>
+
+  <gazebo reference="intel_cam_link">
+  <sensor name="d435_link_camera" type="depth">
+    <update_rate>20</update_rate>
+    <camera>
+      <horizontal_fov>1.047198</horizontal_fov>
+      <image>
+        <width>640</width>
+        <height>480</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.05</near>
+        <far>3</far>
+      </clip>
+    </camera>
+    <plugin name="d435_link_controller" filename="libgazebo_ros_openni_kinect.so">
+      <baseline>0.2</baseline>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>1.0</updateRate>
+      <cameraName>intel_cam_ir</cameraName>
+      <imageTopicName>/intel_cam/color/image_raw</imageTopicName>
+      <cameraInfoTopicName>/intel_cam/color/camera_info</cameraInfoTopicName>
+      <depthImageTopicName>/intel_cam/depth/image_raw</depthImageTopicName>
+      <depthImageInfoTopicName>/intel_cam/depth/camera_info</depthImageInfoTopicName>
+      <pointCloudTopicName>/intel_cam/depth/points</pointCloudTopicName>
+      <frameName>intel_cam_depth_optical_frame</frameName>
+      <pointCloudCutoff>0.5</pointCloudCutoff>
+      <pointCloudCutoffMax>3.0</pointCloudCutoffMax>
+      <distortionK1>0.00000001</distortionK1>
+      <distortionK2>0.00000001</distortionK2>
+      <distortionK3>0.00000001</distortionK3>
+      <distortionT1>0.00000001</distortionT1>
+      <distortionT2>0.00000001</distortionT2>
+      <CxPrime>0</CxPrime>
+      <Cx>0</Cx>
+      <Cy>0</Cy>
+      <focalLength>0</focalLength>
+      <hackBaseline>0</hackBaseline>
+    </plugin>
+  </sensor>
+</gazebo>
+  
+</robot>
