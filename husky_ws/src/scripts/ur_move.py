@@ -69,11 +69,10 @@ def all_close(goal, actual, tolerance):
 
   return True
 
-class MoveGroupPythonInteface(object):
-  """MoveGroupPythonInteface
-"""
+class MoveGroupPythonIntefaceTutorial(object):
+  """MoveGroupPythonIntefaceTutorial"""
   def __init__(self):
-    super(MoveGroupPythonInteface, self).__init__()
+    super(MoveGroupPythonIntefaceTutorial, self).__init__()
 
     ## BEGIN_SUB_TUTORIAL setup
     ##
@@ -105,9 +104,30 @@ class MoveGroupPythonInteface(object):
                                                    moveit_msgs.msg.DisplayTrajectory,
                                                    queue_size=20)
 
+    ## END_SUB_TUTORIAL
+
+    ## BEGIN_SUB_TUTORIAL basic_info
+    ##
+    ## Getting Basic Information
+    ## ^^^^^^^^^^^^^^^^^^^^^^^^^
+    # We can get the name of the reference frame for this robot:
     planning_frame = move_group.get_planning_frame()
+    print "============ Planning frame: %s" % planning_frame
+
+    # We can also print the name of the end-effector link for this group:
     eef_link = move_group.get_end_effector_link()
+    print "============ End effector link: %s" % eef_link
+
+    # We can get a list of all the groups in the robot:
     group_names = robot.get_group_names()
+    print "============ Available Planning Groups:", robot.get_group_names()
+
+    # Sometimes for debugging it is useful to print the entire state of the
+    # robot:
+    print "============ Printing robot state"
+    print robot.get_current_state()
+    print ""
+    ## END_SUB_TUTORIAL
 
     # Misc variables
     self.box_name = ''
@@ -134,13 +154,12 @@ class MoveGroupPythonInteface(object):
     ## thing we want to do is move it to a slightly better configuration.
     # We can get the joint values from the group and adjust some of the values:
     joint_goal = move_group.get_current_joint_values()
-    joint_goal[0] = -pi/4
-    joint_goal[1] = 0
-    joint_goal[2] = 0
-    joint_goal[3] = 0
-    joint_goal[4] = 0
-    joint_goal[5] = 0
-    joint_goal[6] = 0
+    joint_goal[0] = pi
+    # joint_goal[1] = 0
+    # joint_goal[2] = 0
+    # joint_goal[3] = 0
+    # joint_goal[4] = 0
+    # joint_goal[5] = 0
 
     # The go command can be called with joint values, poses, or without any
     # parameters if you have already set the pose or joint target for the group
@@ -181,13 +200,21 @@ class MoveGroupPythonInteface(object):
     # pose_goal.position.z = 0.2
 
     ## euler for unplug
-    roll=1.50
-    pitch=0.00
-    yaw=0.0
+    # roll=1.50
+    # pitch=0.00
+    # yaw=0.0
+    # ## pose for unplug
+    # pose_goal.position.x = 0.50
+    # pose_goal.position.y = -0.50
+    # pose_goal.position.z = 0.2
+
+    roll=0.0
+    pitch=-0.400
+    yaw=1.570
     ## pose for unplug
-    pose_goal.position.x = -0.50
-    pose_goal.position.y = -0.50
-    pose_goal.position.z = 0.2
+    pose_goal.position.x = 0.0
+    pose_goal.position.y = 0.0
+    pose_goal.position.z = 0.8
 
     quaternion = tf.transformations.quaternion_from_euler(roll,pitch,yaw)
     
@@ -346,15 +373,114 @@ class MoveGroupPythonInteface(object):
     ## END_SUB_TUTORIAL
 
 
+  def add_box(self, timeout=4):
+    # Copy class variables to local variables to make the web tutorials more clear.
+    # In practice, you should use the class variables directly unless you have a good
+    # reason not to.
+    box_name = self.box_name
+    scene = self.scene
+
+    ## BEGIN_SUB_TUTORIAL add_box
+    ##
+    ## Adding Objects to the Planning Scene
+    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ## First, we will create a box in the planning scene at the location of the left finger:
+    box_pose = geometry_msgs.msg.PoseStamped()
+    box_pose.header.frame_id = "panda_leftfinger"
+    box_pose.pose.orientation.w = 1.0
+    box_pose.pose.position.z = 0.07 # slightly above the end effector
+    box_name = "box"
+    scene.add_box(box_name, box_pose, size=(0.1, 0.1, 0.1))
+
+    ## END_SUB_TUTORIAL
+    # Copy local variables back to class variables. In practice, you should use the class
+    # variables directly unless you have a good reason not to.
+    self.box_name=box_name
+    return self.wait_for_state_update(box_is_known=True, timeout=timeout)
+
+
+  def attach_box(self, timeout=4):
+    # Copy class variables to local variables to make the web tutorials more clear.
+    # In practice, you should use the class variables directly unless you have a good
+    # reason not to.
+    box_name = self.box_name
+    robot = self.robot
+    scene = self.scene
+    eef_link = self.eef_link
+    group_names = self.group_names
+
+    ## BEGIN_SUB_TUTORIAL attach_object
+    ##
+    ## Attaching Objects to the Robot
+    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ## Next, we will attach the box to the Panda wrist. Manipulating objects requires the
+    ## robot be able to touch them without the planning scene reporting the contact as a
+    ## collision. By adding link names to the ``touch_links`` array, we are telling the
+    ## planning scene to ignore collisions between those links and the box. For the Panda
+    ## robot, we set ``grasping_group = 'hand'``. If you are using a different robot,
+    ## you should change this value to the name of your end effector group name.
+    grasping_group = 'hand'
+    touch_links = robot.get_link_names(group=grasping_group)
+    scene.attach_box(eef_link, box_name, touch_links=touch_links)
+    ## END_SUB_TUTORIAL
+
+    # We wait for the planning scene to update.
+    return self.wait_for_state_update(box_is_attached=True, box_is_known=False, timeout=timeout)
+
+
+  def detach_box(self, timeout=4):
+    # Copy class variables to local variables to make the web tutorials more clear.
+    # In practice, you should use the class variables directly unless you have a good
+    # reason not to.
+    box_name = self.box_name
+    scene = self.scene
+    eef_link = self.eef_link
+
+    ## BEGIN_SUB_TUTORIAL detach_object
+    ##
+    ## Detaching Objects from the Robot
+    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ## We can also detach and remove the object from the planning scene:
+    scene.remove_attached_object(eef_link, name=box_name)
+    ## END_SUB_TUTORIAL
+
+    # We wait for the planning scene to update.
+    return self.wait_for_state_update(box_is_known=True, box_is_attached=False, timeout=timeout)
+
+
+  def remove_box(self, timeout=4):
+    # Copy class variables to local variables to make the web tutorials more clear.
+    # In practice, you should use the class variables directly unless you have a good
+    # reason not to.
+    box_name = self.box_name
+    scene = self.scene
+
+    ## BEGIN_SUB_TUTORIAL remove_object
+    ##
+    ## Removing Objects from the Planning Scene
+    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ## We can remove the box from the world.
+    scene.remove_world_object(box_name)
+
+    ## **Note:** The object must be detached before we can remove it from the world
+    ## END_SUB_TUTORIAL
+
+    # We wait for the planning scene to update.
+    return self.wait_for_state_update(box_is_attached=False, box_is_known=False, timeout=timeout)
+
 
 def main():
   try:
-    print("UR5 move to point")
-    move_ur = MoveGroupPythonInteface()
+    print("Panda move to point test")
+    tutorial = MoveGroupPythonIntefaceTutorial()
     print "============ Press `Enter` to execute a movement using a pose goal ..."
     raw_input()
-    move_ur.go_to_pose_goal()
-    
+    #tutorial.go_to_pose_goal()
+    tutorial.go_to_joint_state()
+    # print "============ Press `Enter` to execute a movement using a joint state ..."
+    # raw_input()
+    # tutorial.go_to_joint_state()
+
   except rospy.ROSInterruptException:
     return
   except KeyboardInterrupt:
