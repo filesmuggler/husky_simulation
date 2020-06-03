@@ -42,7 +42,7 @@
 		
 		<!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
 		<!--<param name="frame_id" type="string" value="odom_combined" />-->
-		<param name="frame_id" type="string" value="odom" />
+		<param name="frame_id" type="string" value="base_link" />
 		
 		<!-- maximum range to integrate (speedup!) -->
 		<param name="sensor_model/max_range" value="2.0" />

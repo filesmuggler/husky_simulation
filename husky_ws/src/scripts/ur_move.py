@@ -45,6 +45,7 @@ from math import pi
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 import tf
+import time
 
 
 def all_close(goal, actual, tolerance):
@@ -140,7 +141,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     self.group_names = group_names
 
 
-  def go_to_joint_state(self):
+  def go_to_joint_state(self, angle):
     # Copy class variables to local variables to make the web tutorials more clear.
     # In practice, you should use the class variables directly unless you have a good
     # reason not to.
@@ -154,7 +155,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     ## thing we want to do is move it to a slightly better configuration.
     # We can get the joint values from the group and adjust some of the values:
     joint_goal = move_group.get_current_joint_values()
-    joint_goal[0] = pi
+    joint_goal[0] = angle
     # joint_goal[1] = 0
     # joint_goal[2] = 0
     # joint_goal[3] = 0
@@ -475,8 +476,10 @@ def main():
     tutorial = MoveGroupPythonIntefaceTutorial()
     print "============ Press `Enter` to execute a movement using a pose goal ..."
     raw_input()
-    #tutorial.go_to_pose_goal()
-    tutorial.go_to_joint_state()
+    tutorial.go_to_pose_goal()
+    tutorial.go_to_joint_state(pi)
+    time.sleep(5)
+    tutorial.go_to_joint_state(-pi)
     # print "============ Press `Enter` to execute a movement using a joint state ..."
     # raw_input()
     # tutorial.go_to_joint_state()
