@@ -2,21 +2,67 @@
 import rospy
 import sensor_msgs.point_cloud2
 from sensor_msgs.msg import PointCloud2
-# import ros_numpy
-# import numpy as np
+import ros_numpy
+import numpy as np
+
+
+
+def pointcloud2_to_array(cloud_msg, squeeze=True):
+    ''' Converts a rospy PointCloud2 message to a numpy recordarray
+    Reshapes the returned array to have shape (height, width), even if the height is 1.
+    The reason for using np.fromstring rather than struct.unpack is speed... especially
+    for large point clouds, this will be <much> faster.
+    '''
+    # construct a numpy record type equivalent to the point type of this cloud
+    dtype_list = ros_numpy.point_cloud2.fields_to_dtype(cloud_msg.fields, cloud_msg.point_step)
+
+    # parse the cloud into an array
+    cloud_arr = np.fromstring(cloud_msg.data, dtype_list)
+
+    # remove the dummy fields that were added
+    cloud_arr = cloud_arr[
+        [fname for fname, _type in dtype_list if not (fname[:len(ros_numpy.point_cloud2.DUMMY_FIELD_PREFIX)] == ros_numpy.point_cloud2.DUMMY_FIELD_PREFIX)]]
+
+    if squeeze and cloud_msg.height == 1:
+        return np.reshape(cloud_arr, (cloud_msg.width,))
+    else:
+        return np.reshape(cloud_arr, (cloud_msg.height, cloud_msg.width)) 
+
+
+def array_to_pointcloud2(cloud_arr, stamp=None, frame_id=None):
+    '''Converts a numpy record array to a sensor_msgs.msg.PointCloud2.
+    '''
+    # make it 2d (even if height will be 1)
+    cloud_arr = np.atleast_2d(cloud_arr)
+
+    cloud_msg = PointCloud2()
+
+    if stamp is not None:
+        cloud_msg.header.stamp = stamp
+    if frame_id is not None:
+        cloud_msg.header.frame_id = frame_id
+    cloud_msg.height = cloud_arr.shape[0]
+    cloud_msg.width = cloud_arr.shape[1]
+    cloud_msg.fields = ros_numpy.point_cloud2.dtype_to_fields(cloud_arr.dtype)
+    cloud_msg.is_bigendian = False # assumption
+    cloud_msg.point_step = cloud_arr.dtype.itemsize
+    cloud_msg.row_step = cloud_msg.point_step*cloud_arr.shape[1]
+    cloud_msg.is_dense = all([np.isfinite(cloud_arr[fname]).all() for fname in cloud_arr.dtype.names])
+    cloud_msg.data = cloud_arr.tostring()
+    return cloud_msg 
+
+
+
 
 def callback(data):
-    # # pcl2 to numpy
-    # pc = ros_numpy.numpify(data)
-    # points = np.zeros((pc.shape[0],3))
-    # points[:,0] = pc['x']
-    # points[:,1] = pc['y']
-    # points[:,2] = pc['z']
-    msg = PointCloud2()
-    for point in sensor_msgs.point_cloud2.read_points(data, skip_nans=True):
-        print(point[0],point[1],point[2])
-        msg.append(point)
-    
+    pcl2_array = pointcloud2_to_array(data)
+    # for point in pcl2_array:
+    #     print(point)
+    new_pcl2 = array_to_pointcloud2(pcl2_array,frame_id='base_link')
+    pub = rospy.Publisher("/hellothere",PointCloud2,queue_size=1000000)
+    while not rospy.is_shutdown():
+        pub.publish(new_pcl2)
+        rospy.Rate(0.1).sleep()
     
 
 
