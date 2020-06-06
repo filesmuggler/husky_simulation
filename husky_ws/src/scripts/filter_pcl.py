@@ -5,8 +5,6 @@ from sensor_msgs.msg import PointCloud2
 import ros_numpy
 import numpy as np
 
-
-
 def pointcloud2_to_array(cloud_msg, squeeze=True):
     ''' Converts a rospy PointCloud2 message to a numpy recordarray
     Reshapes the returned array to have shape (height, width), even if the height is 1.
