@@ -56,14 +56,36 @@ def array_to_pointcloud2(cloud_arr, stamp=None, frame_id=None):
 
 def callback(data):
     pcl2_array = pointcloud2_to_array(data)
-    # for point in pcl2_array:
-    #     print(point)
-    new_pcl2 = array_to_pointcloud2(pcl2_array,frame_id='base_link')
-    pub = rospy.Publisher("/hellothere",PointCloud2,queue_size=1000000)
-    while not rospy.is_shutdown():
-        pub.publish(new_pcl2)
-        rospy.Rate(0.1).sleep()
-    
+    pcl2_new_array = []
+    for point in pcl2_array:
+        if point[2] > 0.0 and point[0]<0.5 and point[0]>-0.5 and point[1]<0.5 and point[1]>-0.5 or point[2]<0.10:
+            #print(point)
+            pass
+        else:
+            pcl2_new_array.append(point)
+            print(point)
+
+    avg_obj_center = [0,0,0]
+    if len(pcl2_new_array) != 0:
+        for point in pcl2_new_array:
+            avg_obj_center[0]=avg_obj_center[0]+point[0]
+            avg_obj_center[1]=avg_obj_center[0]+point[1]
+            avg_obj_center[2]=avg_obj_center[0]+point[2]
+
+        if(len(pcl2_new_array) is not 0):
+            avg_obj_center[0]=avg_obj_center[0]*1.0/len(pcl2_new_array)
+            avg_obj_center[1]=avg_obj_center[1]*1.0/len(pcl2_new_array)
+            avg_obj_center[2]=avg_obj_center[2]*1.0/len(pcl2_new_array)
+
+            print("center: ",avg_obj_center)
+
+        new_pcl2 = array_to_pointcloud2(pcl2_new_array,frame_id='base_link')
+        pub = rospy.Publisher("/hellothere",PointCloud2,queue_size=1000000)
+        while not rospy.is_shutdown():
+            pub.publish(new_pcl2)
+            rospy.Rate(0.1).sleep()
+    else:
+        print("no object within reach of the camera")
 
 
 def filter_pcl():

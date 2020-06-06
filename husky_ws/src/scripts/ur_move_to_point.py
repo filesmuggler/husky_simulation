@@ -207,7 +207,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     ## pose for unplug
     pose_goal.position.x = 0.50
     pose_goal.position.y = -0.50
-    pose_goal.position.z = 0.2
+    pose_goal.position.z = 0.15
 
     quaternion = tf.transformations.quaternion_from_euler(roll,pitch,yaw)
     
