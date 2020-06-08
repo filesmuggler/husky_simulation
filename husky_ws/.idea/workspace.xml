@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="65e6bf16-a107-4f76-ba21-aaf9fa3b713f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/husky/husky_gazebo/launch/playpen.launch" beforeDir="false" afterPath="$PROJECT_DIR$/src/husky/husky_gazebo/launch/playpen.launch" afterDir="false" />
-    </list>
+    <list default="true" id="65e6bf16-a107-4f76-ba21-aaf9fa3b713f" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,6 +33,7 @@
       <option name="presentableId" value="Default" />
       <updated>1590755722021</updated>
       <workItem from="1590755723586" duration="46000" />
+      <workItem from="1591529695480" duration="20000" />
     </task>
     <servers />
   </component>

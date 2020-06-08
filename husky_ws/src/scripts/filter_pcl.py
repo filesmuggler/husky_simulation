@@ -4,6 +4,7 @@ import sensor_msgs.point_cloud2
 from sensor_msgs.msg import PointCloud2
 import ros_numpy
 import numpy as np
+import math
 
 def pointcloud2_to_array(cloud_msg, squeeze=True):
     ''' Converts a rospy PointCloud2 message to a numpy recordarray
@@ -25,7 +26,6 @@ def pointcloud2_to_array(cloud_msg, squeeze=True):
         return np.reshape(cloud_arr, (cloud_msg.width,))
     else:
         return np.reshape(cloud_arr, (cloud_msg.height, cloud_msg.width)) 
-
 
 def array_to_pointcloud2(cloud_arr, stamp=None, frame_id=None):
     '''Converts a numpy record array to a sensor_msgs.msg.PointCloud2.
@@ -49,9 +49,6 @@ def array_to_pointcloud2(cloud_arr, stamp=None, frame_id=None):
     cloud_msg.data = cloud_arr.tostring()
     return cloud_msg 
 
-
-
-
 def callback(data):
     pcl2_array = pointcloud2_to_array(data)
     pcl2_new_array = []
@@ -61,7 +58,7 @@ def callback(data):
             pass
         else:
             pcl2_new_array.append(point)
-            print(point)
+            #print(point)
 
     avg_obj_center = [0,0,0]
     if len(pcl2_new_array) != 0:
@@ -76,8 +73,21 @@ def callback(data):
             avg_obj_center[2]=avg_obj_center[2]*1.0/len(pcl2_new_array)
 
             print("center: ",avg_obj_center)
+            # if abs(avg_obj_center[0])>0.5 or abs(avg_obj_center[1])>0.5:
+            #     if (abs(avg_obj_center[0])-0.5)>0:
+            #         print("avgx-0.5:",abs(avg_obj_center[0])-0.5)
+            #     if (abs(avg_obj_center[1])-0.5)>0:
+            #         print("avgy-0.5:",abs(avg_obj_center[1])-0.5)
+         
+            #     print("object to far about: ", math.sqrt((((abs(avg_obj_center[0])-0.5)**2)+((abs(avg_obj_center[1])-0.5)**2))))
+            r = 0.8
+            print(math.sqrt((abs(avg_obj_center[0])+0.22)**2+avg_obj_center[1]**2))
+            if math.sqrt((abs(avg_obj_center[0])-0.22)**2+avg_obj_center[1]**2) > r:
+                print("object to far")
+
 
         new_pcl2 = array_to_pointcloud2(pcl2_new_array,frame_id='base_link')
+        #new_pcl2 = array_to_pointcloud2(pcl2_new_array,frame_id='ur5_arm_base')
         pub = rospy.Publisher("/hellothere",PointCloud2,queue_size=1000000)
         while not rospy.is_shutdown():
             pub.publish(new_pcl2)
