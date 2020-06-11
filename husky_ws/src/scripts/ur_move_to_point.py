@@ -478,14 +478,14 @@ def main():
     tutorial = MoveGroupPythonIntefaceTutorial()
     # print "============ Press `Enter` to execute a movement using a pose goal ..."
     # raw_input()
-    pose = [0.0,0.5,0.30,0,3.14,1.54]
+    pose = [0.0,0.43,0.31,0,3.14,1.54]
     tutorial.go_to_pose_goal(pose)
-    pose = [0.0,0.5,0.15,0,3.14,1.54]
-    tutorial.go_to_pose_goal(pose)
-    pose = [0.0,-0.5,0.30,0,3.14,-1.54]
-    tutorial.go_to_pose_goal(pose)
-    pose = [0.0,-0.5,0.15,0,3.14,-1.54]
-    tutorial.go_to_pose_goal(pose)
+    # pose = [0.0,0.5,0.15,0,3.14,1.54]
+    # tutorial.go_to_pose_goal(pose)
+    # pose = [0.0,-0.5,0.30,0,3.14,-1.54]
+    # tutorial.go_to_pose_goal(pose)
+    # pose = [0.0,-0.5,0.15,0,3.14,-1.54]
+    # tutorial.go_to_pose_goal(pose)
     # print "============ Press `Enter` to execute a movement using a joint state ..."
     # raw_input()
     # tutorial.go_to_joint_state()

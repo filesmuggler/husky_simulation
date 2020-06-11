@@ -46,8 +46,8 @@ def callback(data):
     if len(pcl2_new_array) != 0:
         for point in pcl2_new_array:
             avg_obj_center[0]=avg_obj_center[0]+point[0]
-            avg_obj_center[1]=avg_obj_center[0]+point[1]
-            avg_obj_center[2]=avg_obj_center[0]+point[2]
+            avg_obj_center[1]=avg_obj_center[1]+point[1]
+            avg_obj_center[2]=avg_obj_center[2]+point[2]
 
         if(len(pcl2_new_array) is not 0):
             avg_obj_center[0]=avg_obj_center[0]*1.0/len(pcl2_new_array)
@@ -55,14 +55,14 @@ def callback(data):
             avg_obj_center[2]=avg_obj_center[2]*1.0/len(pcl2_new_array)
 
             print("center: ",avg_obj_center)
-            r = 0.7
+            r = 0.85
             print(math.sqrt((abs(avg_obj_center[0])+0.22)**2+avg_obj_center[1]**2))
             if math.sqrt((abs(avg_obj_center[0])+0.22)**2+avg_obj_center[1]**2) > r:
                 print("object to far")
 
-        roll=1.54
-        pitch=0
-        yaw=3.14
+        roll=0.0
+        pitch=3.14
+        yaw=1.54
         q = quaternion_from_euler(roll,pitch,yaw)
         pose = geometry_msgs.msg.Pose()
         pose.position.x = avg_obj_center[0]

@@ -58,14 +58,14 @@ def callback(data):
             pass
         else:
             pcl2_new_array.append(point)
-            #print(point)
+            print(point)
 
     avg_obj_center = [0,0,0]
     if len(pcl2_new_array) != 0:
         for point in pcl2_new_array:
             avg_obj_center[0]=avg_obj_center[0]+point[0]
-            avg_obj_center[1]=avg_obj_center[0]+point[1]
-            avg_obj_center[2]=avg_obj_center[0]+point[2]
+            avg_obj_center[1]=avg_obj_center[1]+point[1]
+            avg_obj_center[2]=avg_obj_center[2]+point[2]
 
         if(len(pcl2_new_array) is not 0):
             avg_obj_center[0]=avg_obj_center[0]*1.0/len(pcl2_new_array)
