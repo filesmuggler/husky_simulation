@@ -29,12 +29,16 @@ def get_gazebo():
             # state_msg.model_name = 'unit_cylinder'
             state_msg.model_name = 'coke_can'
             state_msg.pose.position.x = 0.0#ur5_coord.link_state.pose.position.x + 0.2
-            state_msg.pose.position.y = 0.25 #ur5_coord.link_state.pose.position.y
-            state_msg.pose.position.z = -0.05#ur5_coord.link_state.pose.position.z
-            state_msg.pose.orientation.x = 0.0 #ur5_coord.link_state.pose.orientation.x
-            state_msg.pose.orientation.y = 0.0 #ur5_coord.link_state.pose.orientation.y
-            state_msg.pose.orientation.z = 0.0 #ur5_coord.link_state.pose.orientation.z
-            state_msg.pose.orientation.w = 1.0 #ur5_coord.link_state.pose.orientation.w
+            state_msg.pose.position.y = 0.350 #ur5_coord.link_state.pose.position.y
+            state_msg.pose.position.z = 0.0#ur5_coord.link_state.pose.position.z
+
+            
+
+
+            state_msg.pose.orientation.x = 0.5#ur5_coord.link_state.pose.orientation.x
+            state_msg.pose.orientation.y = 0.5 #ur5_coord.link_state.pose.orientation.y
+            state_msg.pose.orientation.z = -0.50 #ur5_coord.link_state.pose.orientation.z
+            state_msg.pose.orientation.w = 0.50#ur5_coord.link_state.pose.orientation.w
             state_msg.reference_frame = "ur5_arm_wrist_3_link"
 
             print("state_msg: " + str(state_msg))
