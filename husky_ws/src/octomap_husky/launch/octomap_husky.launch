@@ -38,7 +38,7 @@
 	
 	</node>
 	<node pkg="octomap_server" type="octomap_server_node" name="octomap_ird435" ns="ird435">
-		<param name="resolution" value="0.1" />
+		<param name="resolution" value="0.025" />
 		
 		<!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
 		<!--<param name="frame_id" type="string" value="odom_combined" />-->

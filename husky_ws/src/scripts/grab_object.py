@@ -12,16 +12,7 @@ from moveit_commander.conversions import pose_to_list
 import tf
 
 
-def callback(data):
-    move_group = self.move_group     
-    
-    move_group.set_pose_target(data)
 
-    plan = move_group.go(wait=True)
-    move_group.stop()
-    move_group.clear_pose_targets()
-    current_pose = self.move_group.get_current_pose().pose
-    return all_close(data, current_pose, 0.01)
 
 def all_close(goal, actual, tolerance):
     """
@@ -78,6 +69,17 @@ class MoveGroupPythonIntefaceTutorial(object):
       self.planning_frame = planning_frame
       self.eef_link = eef_link
       self.group_names = group_names
+
+    def callback(self,data):
+      move_group = self.move_group     
+      
+      move_group.set_pose_target(data)
+
+      plan = move_group.go(wait=True)
+      move_group.stop()
+      move_group.clear_pose_targets()
+      current_pose = self.move_group.get_current_pose().pose
+      return all_close(data, current_pose, 0.01)
 
     def go_to_pose_goal(self):
       move_group = self.move_group

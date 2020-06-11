@@ -57,7 +57,7 @@ def callback(data):
             print("center: ",avg_obj_center)
             r = 0.7
             print(math.sqrt((abs(avg_obj_center[0])+0.22)**2+avg_obj_center[1]**2))
-            if math.sqrt((abs(avg_obj_center[0])-0.22)**2+avg_obj_center[1]**2) > r:
+            if math.sqrt((abs(avg_obj_center[0])+0.22)**2+avg_obj_center[1]**2) > r:
                 print("object to far")
 
         roll=1.54
