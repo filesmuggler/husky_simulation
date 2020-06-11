@@ -176,7 +176,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     return all_close(joint_goal, current_joints, 0.01)
 
 
-  def go_to_pose_goal(self):
+  def go_to_pose_goal(self,pose):
     # Copy class variables to local variables to make the web tutorials more clear.
     # In practice, you should use the class variables directly unless you have a good
     # reason not to.
@@ -201,13 +201,23 @@ class MoveGroupPythonIntefaceTutorial(object):
     # pose_goal.position.z = 0.2
 
     ## euler for unplug
-    roll=1.50
-    pitch=0.00
-    yaw=0.0
+    # roll=0
+    # pitch=3.14
+    # yaw=1.540
+    # ## pose for unplug
+    # pose_goal.position.x = 0.5
+    # pose_goal.position.y = 0.5
+    # pose_goal.position.z = 0.20
+    # roll=0
+    # pitch=3.14
+    # yaw=1.540
     ## pose for unplug
-    pose_goal.position.x = 0.50
-    pose_goal.position.y = -0.50
-    pose_goal.position.z = 0.15
+    pose_goal.position.x = pose[0]
+    pose_goal.position.y = pose[1]
+    pose_goal.position.z = pose[2]
+    roll = pose[3]
+    pitch = pose[4]
+    yaw = pose[5]
 
     quaternion = tf.transformations.quaternion_from_euler(roll,pitch,yaw)
     
@@ -466,9 +476,16 @@ def main():
   try:
     print("Panda move to point test")
     tutorial = MoveGroupPythonIntefaceTutorial()
-    print "============ Press `Enter` to execute a movement using a pose goal ..."
-    raw_input()
-    tutorial.go_to_pose_goal()
+    # print "============ Press `Enter` to execute a movement using a pose goal ..."
+    # raw_input()
+    pose = [0.0,0.5,0.30,0,3.14,1.54]
+    tutorial.go_to_pose_goal(pose)
+    pose = [0.0,0.5,0.15,0,3.14,1.54]
+    tutorial.go_to_pose_goal(pose)
+    pose = [0.0,-0.5,0.30,0,3.14,-1.54]
+    tutorial.go_to_pose_goal(pose)
+    pose = [0.0,-0.5,0.15,0,3.14,-1.54]
+    tutorial.go_to_pose_goal(pose)
     # print "============ Press `Enter` to execute a movement using a joint state ..."
     # raw_input()
     # tutorial.go_to_joint_state()
